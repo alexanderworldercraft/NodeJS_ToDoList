@@ -12,8 +12,10 @@ const app = express();
 app.use(morgan('dev'));               // Logger des requêtes HTTP
 app.use(express.json());              // Middleware pour parser le JSON dans les requêtes
 
-// Utiliser les routes de tâches
-app.use('/tasks', taskRoutes);
+const authRoutes = require('./routes/authRoutes');
+
+app.use('/auth', authRoutes); // Routes pour l'authentification
+app.use('/tasks', taskRoutes); // Routes pour les tâches
 
 // Définir une route simple pour vérifier que le serveur fonctionne
 app.get('/', (req, res) => {

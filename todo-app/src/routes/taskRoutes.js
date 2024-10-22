@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const taskModel = require('../models/taskModel');
 
+// Protéger toutes les routes de tâches
+const authenticateToken = require('../middleware/authMiddleware'); // Assurez-vous du bon chemin
+
 // Route pour récupérer toutes les tâches avec pagination
 router.get('/', (req, res) => {
     let { page, limit, search, orderBy } = req.query;
