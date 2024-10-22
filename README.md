@@ -357,6 +357,7 @@ Dans tes routes, assure-toi d'utiliser les bons codes d'erreur HTTP pour chaque 
 - `400 Bad Request` pour des erreurs de validation utilisateur.
 - `404 Not Found` si une tâche ou une ressource n’est pas trouvée.
 - `500 Internal Server Error` pour des erreurs serveur.
+
 Par exemple, si l'ID d'une tâche est introuvable lors de sa mise à jour ou suppression, renvoie un `404` :
 ```JS
 // Route pour mettre à jour le statut d'une tâche avec validation

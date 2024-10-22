@@ -1,24 +1,27 @@
 const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const errorHandler = require('./middleware/errorHandler');
+const taskRoutes = require('./routes/taskRoutes');
 
 dotenv.config();
 
 const app = express();
 
-const taskRoutes = require('./routes/taskRoutes');
+// Middleware
+app.use(morgan('dev'));               // Logger des requêtes HTTP
+app.use(express.json());              // Middleware pour parser le JSON dans les requêtes
 
 // Utiliser les routes de tâches
 app.use('/tasks', taskRoutes);
-
-// Middleware
-app.use(morgan('dev'));
-app.use(express.json()); // Pour parser les requêtes JSON
 
 // Définir une route simple pour vérifier que le serveur fonctionne
 app.get('/', (req, res) => {
     res.send('Bienvenue sur l\'API To-Do List');
 });
+
+// Middleware de gestion des erreurs
+app.use(errorHandler);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 3000;

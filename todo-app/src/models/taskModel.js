@@ -5,6 +5,9 @@ const getAllTasks = (callback) => {
     const query = 'SELECT * FROM Task';
     db.query(query, (err, results) => {
         if (err) {
+            if (err.code === 'ER_BAD_TABLE_ERROR') {
+                return callback(new Error('Table "Task" introuvable.'), null);
+            }
             return callback(err, null);
         }
         callback(null, results);
