@@ -1,13 +1,11 @@
 const db = require('../config/db');
 
 // Fonction pour récupérer toutes les tâches
-const getAllTasks = (callback) => {
-    const query = 'SELECT * FROM Task';
-    db.query(query, (err, results) => {
+const getAllTasks = (limit, offset, search, orderBy, callback) => {
+    let query = `SELECT * FROM Task WHERE Description LIKE ? ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
+    const searchTerm = '%' + search + '%';
+    db.query(query, [searchTerm, limit, offset], (err, results) => {
         if (err) {
-            if (err.code === 'ER_BAD_TABLE_ERROR') {
-                return callback(new Error('Table "Task" introuvable.'), null);
-            }
             return callback(err, null);
         }
         callback(null, results);

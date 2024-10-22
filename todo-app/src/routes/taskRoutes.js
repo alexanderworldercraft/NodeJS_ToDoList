@@ -2,9 +2,17 @@ const express = require('express');
 const router = express.Router();
 const taskModel = require('../models/taskModel');
 
-// Route pour récupérer toutes les tâches
+// Route pour récupérer toutes les tâches avec pagination
 router.get('/', (req, res) => {
-    taskModel.getAllTasks((err, tasks) => {
+    let { page, limit, search, orderBy } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const offset = (page - 1) * limit;
+    search = search || '';
+    orderBy = orderBy || 'CreatedAt DESC'; // Tri par date de création par défaut
+
+    taskModel.getAllTasks(limit, offset, search, orderBy, (err, tasks) => {
         if (err) {
             return res.status(500).json({ error: 'Erreur lors de la récupération des tâches' });
         }
