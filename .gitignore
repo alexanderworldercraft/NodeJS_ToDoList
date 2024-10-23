@@ -1,2 +1,8 @@
 todo-app/node_modules/
 todo-app/.env
+
+todo-app_React/node_modules/
+todo-app_React/.env
+
+todo-app_VueJS/node_modules/
+todo-app_VueJS/.env
