@@ -1,14 +1,18 @@
 # NodeJS_ToDoList
 ## ***Sommaire***
 - [**Description du projet**](#description-du-projet)
-- [**Option bonus : Frontend simple**](#option-bonus--frontend-simple)
 - [**Explication des étapes de la réalisation du projet**](#explication-des-étapes-de-la-réalisation-du-projet)
     - [**Étape 1 : Configuration initiale du projet**](#étape-1--configuration-initiale-du-projet)
     - [**Étape 2 : Connexion à MySQL et création du modèle de tâche**](#étape-2--connexion-à-mysql-et-création-du-modèle-de-tâche)
     - [**Étape 3 : Gestion des erreurs et validations**](#étape-3--gestion-des-erreurs-et-validations)
     - [**Étape 4 : Ajouter la pagination, la recherche et le tri**](#étape-4--ajouter-la-pagination-la-recherche-et-le-tri)
-        - [**Exemple de requête avec toutes les options**](#exemple-de-requête-avec-toutes-les-options-)
+        - [**Exemple de requête avec toutes les options**](#exemple-de-requête-avec-toutes-les-options)
     - [**Étape 5 : Authentification avec JWT**](#étape-5--authentification-avec-jwt)
+        - [**Tester l'authentification**](#tester-lauthentification)
+- [**Résumé du projet**](#résumé-du-projet)
+    - [**Structure du projet**](#structure-du-projet)
+    - [**Contenu des fichiers**](#contenu-des-fichiers)
+- [**Option bonus : Frontend simple**](#option-bonus--frontend-simple)
 ## ***Description du projet***
 Un projet simple pour te familiariser avec Node.js et Express pourrait être la création d'une **application de gestion de tâches** (To-Do List). Voici les fonctionnalités principales pour ce projet :
 
@@ -26,10 +30,8 @@ Un projet simple pour te familiariser avec Node.js et Express pourrait être la 
 4. **Documentation et tests**
     - **Documentation de l'API** avec des outils comme Swagger pour bien structurer tes endpoints.
     - Écris des tests pour l'API avec Jest ou Mocha pour valider les fonctionnalités.
-## ***Option bonus : Frontend simple***
-Pour aller un peu plus loin, tu pourrais ajouter un frontend basique en HTML, CSS et JavaScript pour interagir avec l'API et visualiser les tâches.
-## **Explication des étapes de la réalisation du projet**
-### **Étape 1 : Configuration initiale du projet**
+## ***Explication des étapes de la réalisation du projet***
+### ***Étape 1 : Configuration initiale du projet***
 1. **Créer un nouveau dossier pour ton projet**
 ```bash
 mkdir todo-app
@@ -54,16 +56,15 @@ todo-app/
 ├── src/
 │   ├── routes/
 │   ├── models/
-│   ├── controllers/
 │   └── app.js
 ├── .env
 ├── package.json
 └── package-lock.json
 ```
-    - `routes/` contiendra les fichiers qui définissent les endpoints (routes API).
-    - `models/` pour définir les requêtes SQL ou les modèles de données.
-    - `controllers/` pour la logique métier liée aux tâches.
-    - `app.js` sera le fichier principal qui configure Express.
+- `routes/` contiendra les fichiers qui définissent les endpoints (routes API).
+- `models/` pour définir les requêtes SQL ou les modèles de données.
+- `controllers/` pour la logique métier liée aux tâches.
+- `app.js` sera le fichier principal qui configure Express.
 5. **Créer ton fichier** `.env` Ce fichier contiendra tes variables sensibles (comme les informations de connexion à la base de données). Par exemple :
 ```JS
 DB_HOST=localhost
@@ -96,7 +97,7 @@ app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
 });
 ```
-### **Étape 2 : Connexion à MySQL et création du modèle de tâche**
+### ***Étape 2 : Connexion à MySQL et création du modèle de tâche***
 1. **Configurer la connexion MySQL dans un fichier séparé**
 On va créer un fichier qui gérera la connexion à la base de données. Crée un fichier `src/config/db.js` :
 ```JS
@@ -259,7 +260,7 @@ const taskRoutes = require('./routes/taskRoutes');
 // Utiliser les routes de tâches
 app.use('/tasks', taskRoutes);
 ```
-### **Étape 3 : Gestion des erreurs et validations**
+### ***Étape 3 : Gestion des erreurs et validations***
 1. **Ajout d'une validation simple pour les entrées**
 
 Pour garantir que les descriptions des tâches ne soient pas vides, nous allons ajouter une validation basique avant d'insérer ou de mettre à jour une tâche.
@@ -395,7 +396,7 @@ router.delete('/:taskId', (req, res) => {
     });
 });
 ```
-### **Étape 4 : Ajouter la pagination, la recherche et le tri**
+### ***Étape 4 : Ajouter la pagination, la recherche et le tri***
 1. **Ajouter la pagination**
 
 La pagination permet de limiter le nombre de résultats renvoyés par l'API et d'éviter de renvoyer toutes les tâches en une seule fois. On va ajouter deux paramètres à la route `GET /tasks` : `limit` (nombre de tâches par page) et `page` (numéro de la page).
@@ -508,12 +509,12 @@ router.get('/', (req, res) => {
 });
 ```
 - **orderBy** : permet de trier les résultats par colonne, comme `CreatedAt` ou `Status`.
-#### Exemple de requête avec toutes les options :
+#### Exemple de requête avec toutes les options
 - Pagination : `GET /tasks?page=2&limit=5`
 - Recherche : `GET /tasks?search=important`
 - Tri : `GET /tasks?orderBy=Status ASC`
 - Combinaison : `GET /tasks?search=urgent&page=1&limit=10&orderBy=CreatedAt DESC`
-### Étape 5 : Authentification avec JWT
+### ***Étape 5 : Authentification avec JWT***
 1. **Installer les dépendances nécessaires**
 
 Nous allons utiliser deux nouvelles dépendances :
@@ -526,6 +527,7 @@ Installe-les :
 npm install jsonwebtoken bcryptjs
 ```
 2. **Créer un modèle d'utilisateur**
+
 On va ajouter une table `User` dans la base de données pour gérer l'authentification. Crée cette table dans MySQL :
 ```SQL
 CREATE TABLE User (
@@ -535,3 +537,563 @@ CREATE TABLE User (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
+Ensuite, dans `src/models/`, crée un fichier `userModel.js` pour gérer les utilisateurs :
+```JS
+const db = require('../config/db');
+const bcrypt = require('bcryptjs');
+
+// Fonction pour trouver un utilisateur par son nom
+const findUserByUsername = (username, callback) => {
+    const query = 'SELECT * FROM User WHERE Username = ?';
+    db.query(query, [username], (err, result) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, result[0]);
+    });
+};
+
+// Fonction pour créer un nouvel utilisateur
+const createUser = (username, password, callback) => {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+        if (err) {
+            return callback(err, null);
+        }
+
+        const query = 'INSERT INTO User (Username, Password) VALUES (?, ?)';
+        db.query(query, [username, hashedPassword], (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, result);
+        });
+    });
+};
+
+module.exports = {
+    findUserByUsername,
+    createUser
+};
+```
+3. **Créer les routes d'authentification**
+
+Dans `src/routes/`, crée un fichier `authRoutes.js` pour gérer les utilisateurs et l'authentification.
+```JS
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const userModel = require('../models/userModel');
+const router = express.Router();
+
+// Route pour l'inscription d'un nouvel utilisateur
+router.post('/register', (req, res) => {
+    const { username, password } = req.body;
+
+    // Vérifier que le nom d'utilisateur n'est pas déjà utilisé
+    userModel.findUserByUsername(username, (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+        if (user) {
+            return res.status(400).json({ error: 'Nom d\'utilisateur déjà pris' });
+        }
+
+        // Créer un nouvel utilisateur
+        userModel.createUser(username, password, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: 'Erreur lors de la création de l\'utilisateur' });
+            }
+            res.status(201).json({ message: 'Utilisateur créé avec succès' });
+        });
+    });
+});
+
+// Route pour l'authentification
+router.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Vérifier si l'utilisateur existe
+    userModel.findUserByUsername(username, (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+        if (!user) {
+            return res.status(400).json({ error: 'Nom d\'utilisateur ou mot de passe incorrect' });
+        }
+
+        // Comparer les mots de passe
+        bcrypt.compare(password, user.Password, (err, isMatch) => {
+            if (err || !isMatch) {
+                return res.status(400).json({ error: 'Nom d\'utilisateur ou mot de passe incorrect' });
+            }
+
+            // Générer un token JWT
+            const token = jwt.sign({ userID: user.UserID }, process.env.JWT_SECRET, {
+                expiresIn: '1h'
+            });
+
+            res.json({ message: 'Authentification réussie', token });
+        });
+    });
+});
+
+module.exports = router;
+```
+4. **Ajouter le middleware de vérification du token JWT**
+
+Maintenant, nous allons créer un middleware qui vérifie si un utilisateur est authentifié en vérifiant le token JWT dans l'en-tête `Authorization`.
+
+Crée un fichier `src/middleware/authMiddleware.js` :
+```JS
+const jwt = require('jsonwebtoken');
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Accès refusé, token manquant' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ error: 'Token invalide' });
+        }
+
+        req.user = user; // Stocker l'utilisateur pour utilisation future
+        next();
+    });
+};
+
+module.exports = authenticateToken;
+```
+5. **Protéger les routes sensibles**
+
+Enfin, nous allons protéger les routes sensibles, comme celles pour gérer les tâches, en ajoutant le middleware `authenticateToken` sur ces routes.
+
+Modifie `src/routes/taskRoutes.js` pour inclure ce middleware :
+```JS
+const express = require('express');
+const router = express.Router();
+const taskModel = require('../models/taskModel');
+const authenticateToken = require('../middleware/authMiddleware');
+
+// Protéger toutes les routes de tâches
+router.use(authenticateToken);
+
+// Route pour récupérer toutes les tâches
+router.get('/', (req, res) => {
+    taskModel.getAllTasks((err, tasks) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur lors de la récupération des tâches' });
+        }
+        res.json(tasks);
+    });
+});
+
+// Les autres routes restent les mêmes...
+```
+6. **Connecter les routes d'authentification à l'application principale**
+
+Dans `src/app.js`, ajoute les routes d'authentification :
+```JS
+const authRoutes = require('./routes/authRoutes');
+
+app.use('/auth', authRoutes); // Routes pour l'authentification
+app.use('/tasks', taskRoutes); // Routes pour les tâches
+```
+#### **Tester l'authentification**
+1. **Inscription** : Envoie une requête `POST` à `/auth/register` avec un `username` et `password` dans le body.
+2. **Connexion** : Envoie une requête `POST` à `/auth/login` pour obtenir un token JWT.
+3. **Accéder aux tâches** : Pour accéder aux routes protégées (par exemple, `/tasks`), tu dois inclure le token JWT dans l'en-tête `Authorization` sous la forme `Bearer TOKEN`.
+
+## ***Résumé du projet***
+### ***Structure du projet***
+```
+todo-app/
+├── node_modules/
+├── src/
+│   ├── config/
+│   │   └── db.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── errorHandler.js
+│   ├── models/
+│   │   ├── taskModel.js
+│   │   └── userModel.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── taskRoutes.js
+│   └── app.js
+├── .env
+├── package.json
+└── package-lock.json
+```
+### ***Contenu des fichiers***
+`package.json`
+```JSON
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.3",
+    "tailwindcss": "^3.4.14"
+  }
+}
+```
+`.env`
+```JS
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=ton_mot_de_passe
+DB_NAME=todolist
+JWT_SECRET=ta_clé_secret
+```
+`app.js`
+```JS
+const express = require('express');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+const errorHandler = require('./middleware/errorHandler');
+const taskRoutes = require('./routes/taskRoutes');
+
+dotenv.config();
+
+const app = express();
+
+// Middleware
+app.use(morgan('dev'));               // Logger des requêtes HTTP
+app.use(express.json());              // Middleware pour parser le JSON dans les requêtes
+
+const authRoutes = require('./routes/authRoutes');
+
+app.use('/auth', authRoutes); // Routes pour l'authentification
+app.use('/tasks', taskRoutes); // Routes pour les tâches
+
+// Définir une route simple pour vérifier que le serveur fonctionne
+app.get('/', (req, res) => {
+    res.send('Bienvenue sur l\'API To-Do List');
+});
+
+// Middleware de gestion des erreurs
+app.use(errorHandler);
+
+// Démarrer le serveur
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
+    console.log(`Lien : http://localhost:${PORT}/`);
+});
+```
+`taskRoutes.js`
+```JS
+const express = require('express');
+const router = express.Router();
+const taskModel = require('../models/taskModel');
+
+// Protéger toutes les routes de tâches
+const authenticateToken = require('../middleware/authMiddleware'); // Assurez-vous du bon chemin
+
+// Route pour récupérer toutes les tâches avec pagination
+router.get('/', (req, res) => {
+    let { page, limit, search, orderBy } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const offset = (page - 1) * limit;
+    search = search || '';
+    orderBy = orderBy || 'CreatedAt DESC'; // Tri par date de création par défaut
+
+    taskModel.getAllTasks(limit, offset, search, orderBy, (err, tasks) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur lors de la récupération des tâches' });
+        }
+        res.json(tasks);
+    });
+});
+
+// Route pour ajouter une nouvelle tâche avec validation
+router.post('/', (req, res) => {
+    const { description } = req.body;
+
+    // Validation simple
+    if (!description || description.trim() === '') {
+        return res.status(400).json({ error: 'La description ne peut pas être vide' });
+    }
+
+    taskModel.addTask(description, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur lors de l\'ajout de la tâche' });
+        }
+        res.status(201).json({ message: 'Tâche ajoutée avec succès', taskId: result.insertId });
+    });
+});
+
+// Route pour mettre à jour le statut d'une tâche avec validation
+router.put('/:taskId', (req, res) => {
+    const { taskId } = req.params;
+    const { status } = req.body;
+
+    // Vérification si le statut est valide (0 ou 1)
+    if (typeof status !== 'number' || (status !== 0 && status !== 1)) {
+        return res.status(400).json({ error: 'Statut invalide, il doit être 0 ou 1' });
+    }
+
+    taskModel.updateTaskStatus(taskId, status, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur lors de la mise à jour du statut de la tâche' });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Tâche introuvable' });
+        }
+        res.json({ message: 'Statut de la tâche mis à jour avec succès' });
+    });
+});
+
+// Route pour supprimer une tâche
+router.delete('/:taskId', (req, res) => {
+    const { taskId } = req.params;
+    taskModel.deleteTask(taskId, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur lors de la suppression de la tâche' });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Tâche introuvable' });
+        }
+        res.json({ message: 'Tâche supprimée avec succès' });
+    });
+});
+
+module.exports = router;
+```
+`authRoutes.js`
+```JS
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const userModel = require('../models/userModel');
+const router = express.Router();
+
+// Route pour l'inscription d'un nouvel utilisateur
+router.post('/register', (req, res) => {
+    const { username, password } = req.body;
+
+    // Vérifier que le nom d'utilisateur n'est pas déjà utilisé
+    userModel.findUserByUsername(username, (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+        if (user) {
+            return res.status(400).json({ error: 'Nom d\'utilisateur déjà pris' });
+        }
+
+        // Créer un nouvel utilisateur
+        userModel.createUser(username, password, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: 'Erreur lors de la création de l\'utilisateur' });
+            }
+            res.status(201).json({ message: 'Utilisateur créé avec succès' });
+        });
+    });
+});
+
+// Route pour l'authentification
+router.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Vérifier si l'utilisateur existe
+    userModel.findUserByUsername(username, (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+        if (!user) {
+            return res.status(400).json({ error: 'Nom d\'utilisateur ou mot de passe incorrect' });
+        }
+
+        // Comparer les mots de passe
+        bcrypt.compare(password, user.Password, (err, isMatch) => {
+            if (err || !isMatch) {
+                return res.status(400).json({ error: 'Nom d\'utilisateur ou mot de passe incorrect' });
+            }
+
+            // Générer un token JWT
+            const token = jwt.sign({ userID: user.UserID }, process.env.JWT_SECRET, {
+                expiresIn: '1h'
+            });
+
+            res.json({ message: 'Authentification réussie', token });
+        });
+    });
+});
+
+module.exports = router;
+```
+`userModel.js`
+```JS
+const db = require('../config/db');
+const bcrypt = require('bcryptjs');
+
+// Fonction pour trouver un utilisateur par son nom
+const findUserByUsername = (username, callback) => {
+    const query = 'SELECT * FROM User WHERE Username = ?';
+    db.query(query, [username], (err, result) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, result[0]);
+    });
+};
+
+// Fonction pour créer un nouvel utilisateur
+const createUser = (username, password, callback) => {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+        if (err) {
+            return callback(err, null);
+        }
+
+        const query = 'INSERT INTO User (Username, Password) VALUES (?, ?)';
+        db.query(query, [username, hashedPassword], (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, result);
+        });
+    });
+};
+
+module.exports = {
+    findUserByUsername,
+    createUser
+};
+```
+`taskModel.js`
+```JS
+const db = require('../config/db');
+
+// Fonction pour récupérer toutes les tâches
+const getAllTasks = (limit, offset, search, orderBy, callback) => {
+    let query = `SELECT * FROM Task WHERE Description LIKE ? ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
+    const searchTerm = '%' + search + '%';
+    db.query(query, [searchTerm, limit, offset], (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, results);
+    });
+};
+
+// Fonction pour ajouter une nouvelle tâche
+const addTask = (description, callback) => {
+    const query = 'INSERT INTO Task (Description) VALUES (?)';
+    db.query(query, [description], (err, result) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, result);
+    });
+};
+
+// Fonction pour modifier le statut d'une tâche
+const updateTaskStatus = (taskId, status, callback) => {
+    const query = 'UPDATE Task SET Status = ? WHERE TaskID = ?';
+    db.query(query, [status, taskId], (err, result) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, result);
+    });
+};
+
+// Fonction pour supprimer une tâche
+const deleteTask = (taskId, callback) => {
+    const query = 'DELETE FROM Task WHERE TaskID = ?';
+    db.query(query, [taskId], (err, result) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, result);
+    });
+};
+
+module.exports = {
+    getAllTasks,
+    addTask,
+    updateTaskStatus,
+    deleteTask
+};
+```
+`errorHandler.js`
+```JS
+const errorHandler = (err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Quelque chose s\'est mal passé, réessayez plus tard.' });
+};
+
+module.exports = errorHandler;
+```
+`authMiddleware.js`
+```JS
+const jwt = require('jsonwebtoken');
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Accès refusé, token manquant' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ error: 'Token invalide' });
+        }
+
+        req.user = user; // Stocker l'utilisateur pour utilisation future
+        next();
+    });
+};
+
+module.exports = authenticateToken;
+```
+`db.js`
+```JS
+const mysql = require('mysql2');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+// Créer une connexion à la base de données
+const db = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+});
+
+// Connecter à la base de données
+db.connect((err) => {
+    if (err) {
+        console.error('Erreur de connexion à la base de données:', err);
+        throw err;
+    }
+    console.log('Connecté à la base de données MySQL');
+});
+
+module.exports = db;
+```
+## ***Option bonus : Frontend simple***
+Pour aller un peu plus loin, tu pourrais ajouter un frontend basique en HTML, CSS et JavaScript pour interagir avec l'API et visualiser les tâches.
