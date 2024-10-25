@@ -2,13 +2,22 @@ const db = require('../config/db');
 
 // Fonction pour récupérer toutes les tâches
 const getAllTasks = (limit, offset, search, orderBy, callback) => {
-    let query = `SELECT * FROM Task WHERE Description LIKE ? ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
     const searchTerm = '%' + search + '%';
-    db.query(query, [searchTerm, limit, offset], (err, results) => {
+    const query = `SELECT * FROM Task WHERE Description LIKE ? ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
+    const countQuery = `SELECT COUNT(*) as total FROM Task WHERE Description LIKE ?`;
+
+    db.query(countQuery, [searchTerm], (err, countResult) => {
         if (err) {
             return callback(err, null);
         }
-        callback(null, results);
+        const total = countResult[0].total;
+
+        db.query(query, [searchTerm, limit, offset], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, { tasks: results, total });
+        });
     });
 };
 

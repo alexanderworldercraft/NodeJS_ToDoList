@@ -15,12 +15,15 @@ router.get('/', (req, res) => {
     search = search || '';
     orderBy = orderBy || 'CreatedAt DESC'; // Tri par date de création par défaut
 
-    taskModel.getAllTasks(limit, offset, search, orderBy, (err, tasks) => {
+    taskModel.getAllTasks(limit, offset, search, orderBy, (err, result) => {
         if (err) {
             return res.status(500).json({ error: 'Erreur lors de la récupération des tâches' });
         }
-        res.json(tasks);
-    });
+        res.json({
+            tasks: result.tasks,
+            total: result.total,
+        });
+    });    
 });
 
 // Route pour ajouter une nouvelle tâche avec validation
